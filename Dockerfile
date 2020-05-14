@@ -1,12 +1,12 @@
 # Main
-FROM openresty/openresty:1.15.8.2-alpine
+FROM nginx:1.18.0-alpine
 ARG gitCommit
 ENV GIT_COMMIT ${gitCommit}
 
-RUN mkdir -p /usr/local/openresty/nginx/conf && mkdir -p /ssl
-COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+RUN  mkdir -p /ssl
+COPY nginx.conf /usr/local/etc/nginx/nginx.conf
 COPY ssl/* /ssl/
 
 CMD echo "ui gitCommit:${GIT_COMMIT}" \
-  && openresty -t \
-  && openresty -g 'daemon off;'
+  && nginx -t \
+  && nginx -g 'daemon off;'

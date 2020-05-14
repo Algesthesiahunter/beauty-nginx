@@ -4,7 +4,7 @@ ARG gitCommit
 ENV GIT_COMMIT ${gitCommit}
 
 RUN  mkdir -p /ssl
-COPY nginx.conf /usr/local/etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY ssl/* /ssl/
 
 CMD echo "ui gitCommit:${GIT_COMMIT}" \

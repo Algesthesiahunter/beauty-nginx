@@ -9,4 +9,5 @@ COPY ssl/* /ssl/
 
 CMD echo "ui gitCommit:${GIT_COMMIT}" \
   && nginx -t \
-  && nginx -g 'daemon off;'
+  && nginx -g 'daemon off;' \
+  && nginx

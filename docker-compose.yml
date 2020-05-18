@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  beauty-nginx:
+   container_name: nginx
+   image: registry.cn-shenzhen.aliyuncs.com/algesthesiahunter/algesthesiahunter-ui:v1
+   ports:
+       - "80:80"
+       - "443:443"
+   environment:
+       - LOCAL_IP=172.16.4.111
+   command: /bin/sh -c "envsubst '$${LOCAL_IP}'< /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"

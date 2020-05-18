@@ -1,0 +1,93 @@
+
+#user  nobody;
+worker_processes 1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+events {
+    worker_connections 1024;
+}
+
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+    sendfile on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout 65;
+
+    #gzip  on;
+
+    server {
+        listen 80;
+        server_name mei.youzan.com trade.koudaitong.com cashier.youzan.com;
+
+        listen 443 ssl;
+        ssl_certificate /ssl/_wildcard.youzan.com+3.pem; # 此处地址换成当前你电脑上的证书文件路径
+        ssl_certificate_key /ssl/_wildcard.youzan.com+3-key.pem; # 此处地址换成当前你电脑上的证书文件路径
+
+        location /v2 {
+            proxy_set_header Host $host;
+            proxy_pass http://youzan.com;
+        }
+
+        location /v4 {
+            proxy_set_header Host $host;
+            proxy_pass http://youzan.com;
+        }
+
+        location / {
+            proxy_set_header Host $host;
+            if ($uri ~* ^(/(h5|api|assets)/)|/pay/mei.+) {
+                proxy_pass http://${LOCAL_IP}:8210;
+            }
+            proxy_pass http://${LOCAL_IP}:8211;
+        }
+    }
+
+    ####h5
+    # cashier.youzan.com 本地开发到支付相关的才需要加上
+
+    server {
+        listen       80;
+        server_name   trade.youzan.com  mei1dxbbohexnxn.youzan.com;
+
+        listen 443 ssl;
+        ssl_certificate /ssl/qian.youzan.com.crt;
+        ssl_certificate_key /ssl/qian.youzan.com.key;
+
+        location / {
+            proxy_set_header Host $host;
+            if ($uri ~* ^/(h5|api|assets|wxpay|pay)/) {
+                proxy_pass  http://${LOCAL_IP}:8210;
+            }
+            proxy_pass  http://youzan.com;
+        }
+    }
+
+    server {
+        listen 80;
+        server_name  s1.dbj.youzan.com;
+
+        listen 443 ssl;
+        ssl_certificate /ssl/qian.youzan.com.crt;
+        ssl_certificate_key /ssl/qian.youzan.com.key;
+
+        location / {
+            proxy_set_header Host $host;
+            proxy_pass  http://${LOCAL_IP}:8210;
+        }
+    }
+    include servers/*;
+}

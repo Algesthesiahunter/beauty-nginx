@@ -3,7 +3,7 @@ version: "3.7"
 services:
   beauty-nginx:
    container_name: nginx
-   image: registry.cn-shenzhen.aliyuncs.com/algesthesiahunter/algesthesiahunter-ui:v1
+   image: registry.cn-shenzhen.aliyuncs.com/algesthesiahunter/beauty-nginx:v1
    ports:
        - "80:80"
        - "443:443"
